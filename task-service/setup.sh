@@ -19,7 +19,7 @@ function deploy_docker_kubernetes {
   docker run -d jaustinmiles/task-service
   docker tag jaustinmiles/task-service:latest "$clusterImage"
   docker push "$clusterImage"
-  kubectl apply -f deployment.yaml
+  envsubst < deployment.yaml | kubectl apply -f -
   kubectl apply -f service.yaml
   kubectl apply -f loadbalancer.yaml
   kubectl rollout restart deployment task-service-app
