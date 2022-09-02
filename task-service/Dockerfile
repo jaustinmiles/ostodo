@@ -1,18 +1,15 @@
 FROM golang:1.19-alpine
 
+LABEL base.name="ostodo.task-service"
+
 WORKDIR /app
 
-COPY go.mod ./
-COPY go.sum ./
-
+COPY . .
 RUN go mod download
 
-COPY *.go ./
+RUN go build -o task-service .
 
-RUN go build -o /task-service
-
-RUN go install
 
 EXPOSE 9090
 
-CMD ["/task-service"]
+ENTRYPOINT ["./task-service"]

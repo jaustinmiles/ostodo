@@ -4,7 +4,8 @@ import (
 	"context"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"go.uber.org/zap"
+	"github.com/jaustinmiles/ostodo/task-service/common"
+	"github.com/jaustinmiles/ostodo/task-service/db"
 	"log"
 	"net/http"
 	"os"
@@ -12,15 +13,10 @@ import (
 	"time"
 )
 
-func getLogger() *zap.SugaredLogger {
-	logger, _ := zap.NewProduction()
-	defer logger.Sync()
-	return logger.Sugar()
-}
-
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	l := getLogger()
+	l := common.GetLogger()
 	_, err := w.Write([]byte("pong\n"))
+	db.Run()
 	if err != nil {
 		l.Errorf("couldn't write response to client: %v", err)
 	}
@@ -28,7 +24,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	l := getLogger()
+	l := common.GetLogger()
 	l.Info("creating server")
 	// CORS
 	cors := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
